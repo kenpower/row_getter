@@ -1,12 +1,7 @@
-Welcome to the Gomix BETA (Flask / Python Edition™)
-===================================================
+Flask / Python Version of the default 'Dreams' project
+======================================================
 
 Click `"Show"` in the header to see your app live. Updates to your code will instantly deploy and update live.
-
-Gomix is a developer playground that lets you code a real web-app without the slow setup and deployment steps.
-
-[About Gomix](https://gomix.com/about)
-
 
 Your Project
 ------------
@@ -21,7 +16,4 @@ On the front-end,
 - drag in `assets`, like images or music, to add them to your project
 
 
-A Kenneth Reitz Project™ (inspired by Fog Creek)
-----------------------------------------------
-
- ۜ\(סּںסּَ` )/ۜ
+Remixed from '[flask-hello-world]()' by Kenneth Reitz
