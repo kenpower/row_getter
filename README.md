@@ -16,4 +16,4 @@ On the front-end,
 - drag in `assets`, like images or music, to add them to your project
 
 
-Remixed from '[flask-hello-world]()' by Kenneth Reitz
+Remixed from 'flask-hello-world' by Kenneth Reitz

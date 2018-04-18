@@ -48,8 +48,8 @@ def dreams():
     """
   
     # Add a dream to the in-memory database, if given. 
-    if 'dreams' in request.args:
-        DREAMS.append(request.args['dreams'])
+    if 'dream' in request.args:
+        DREAMS.append(request.args['dream'])
     
     # Return the list of remembered dreams. 
     return jsonify(DREAMS)
