@@ -12,6 +12,7 @@
 
 import os
 from flask import Flask, request, render_template, jsonify
+import test
 
 # Support for gomix's 'front-end' and 'back-end' UI.
 app = Flask(__name__, static_folder='public', template_folder='views')
@@ -40,7 +41,11 @@ def apply_kr_hello(response):
 def homepage():
     """Displays the homepage."""
     return render_template('index.html')
-    
+
+@app.route('/lol')
+def rlol():
+    return jsonify(test.lol())
+  
 @app.route('/dreams', methods=['GET', 'POST'])
 def dreams():
     """Simple API endpoint for dreams. 
