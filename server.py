@@ -19,9 +19,8 @@ from google.auth.transport import requests
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1-ezwh3gMwm4aVD-NT22q3nTFlPYpsFGFbW2q8UEHBiY'
+SAMPLE_SPREADSHEET_ID = '1HKlFYiyL6IGTsGHBtAnwNfzo0tkmO5wTm-8Avp-m5zM'
 SAMPLE_RANGE_NAME = 'A2:E100'
-
 
 # Support for gomix's 'front-end' and 'back-end' UI.
 app = Flask(__name__, static_folder='public', template_folder='views')
@@ -69,24 +68,28 @@ def id():
   try:
     # Specify the CLIENT_ID of the app that accesses the backend:
     idinfo = id_token.verify_oauth2_token(request.form['credential'], requests.Request(), "633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.com")
-
-    # Or, if multiple clients access the backend server:
-    # idinfo = id_token.verify_oauth2_token(token, requests.Request())
-    # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
-    #     raise ValueError('Could not verify audience.')
-
-    # If auth request is from a G Suite domain:
-    # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
-    #     raise ValueError('Wrong hosted domain.')
-
-    # ID token is valid. Get the user's Google Account ID from the decoded token.
     userid = idinfo['sub']
   except ValueError:
        abort(400, 'Invalid Token')
       
-  return jsonify(str(idinfo))
+  return get_rows(idinfo['email'])
   
+  
+def get_rows():  
+    sheet=sheet_service().spreadsheets()
+  
+   
+    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                                range=SAMPLE_RANGE_NAME).execute()
+    values = result.get('values', [])
 
+def sheet_service():
+    creds = None
+    service_account_info = json.load(open('.data/service_account.json'))
+    creds = Credentials.from_service_account_info(service_account_info)
+
+    return build('sheets', 'v4', credentials=creds)
+  
 @app.route('/lol')
 def rlol():
     """Shows basic usage of the Sheets API.
@@ -96,18 +99,6 @@ def rlol():
     #print("Google:" + os.environ.get('GOOGLE_PRIVATE_KEY'))
     service_account_info = json.load(open('.data/service_account.json'))
     creds = Credentials.from_service_account_info(service_account_info)
-    
-    # If there are no (valid) credentials available, let the user log in.
-    # if not creds or not creds.valid:
-    #     if creds and creds.expired and creds.refresh_token:
-    #         creds.refresh(Request())
-    #     else:
-    #         flow = InstalledAppFlow.from_client_secrets_file(
-    #             'credentials.json', SCOPES)
-    #         creds = flow.run_local_server(port=0)
-    #     # Save the credentials for the next run
-    #     with open('token.json', 'w') as token:
-    #         token.write(creds.to_json())
 
     service = build('sheets', 'v4', credentials=creds)
 
@@ -122,18 +113,6 @@ def rlol():
 
     return jsonify(values)
   
-@app.route('/dreams', methods=['GET', 'POST'])
-def dreams():
-    """Simple API endpoint for dreams. 
-    In memory, ephemeral, like real dreams.
-    """
-  
-    # Add a dream to the in-memory database, if given. 
-    if 'dream' in request.args:
-        DREAMS.append(request.args['dream'])
-    
-    # Return the list of remembered dreams. 
-    return jsonify(DREAMS)
 
 if __name__ == '__main__':
     app.run()
