@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-
 from __future__ import print_function
 import os
 from flask import Flask, request, render_template, jsonify
 import test
 import os.path
+import json
+
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -54,8 +54,9 @@ def rlol():
     Prints values from a sample spreadsheet.
     """
     creds = None
-c  redentials = service_account.Credentials.from_service_account_info(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    print("Google:" + str(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')))
+    service_account_info = json.load(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
+    creds = service_account.Credentials.from_service_account_info(service_account_info)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
