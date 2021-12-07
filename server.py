@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, abort
 import test
 import os.path
 import json
@@ -51,10 +51,20 @@ def homepage():
   
 @app.route('/')
 def signin():
-   print("test")
    return render_template('signin.html')
 
-@app.route('/id', )
+@app.route('/id', methods=['GET', 'POST'])
+def id():
+  csrf_token_cookie = request.cookies.get('g_csrf_token')
+  if not csrf_token_cookie:
+      abort(400, 'No CSRF token in Cookie.')
+  csrf_token_body = request.get('g_csrf_token')
+  if not csrf_token_body:
+      abort(400, 'No CSRF token in post body.')
+  if csrf_token_cookie != csrf_token_body:
+      abort(400, 'Failed to verify double submit cookie.')
+  return jsonify(str(request.headers)+str(request.cookies))
+
 @app.route('/lol')
 def rlol():
     """Shows basic usage of the Sheets API.
