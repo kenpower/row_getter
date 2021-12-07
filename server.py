@@ -43,12 +43,12 @@ def apply_kr_hello(response):
     return response
 
 
-@app.route('/')
+@app.route('/main')
 def homepage():
     """Displays the homepage."""
     return render_template('index.html')
 
-@app.route('/lol')
+@app.route('/')
 def rlol():
     """Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
@@ -57,17 +57,18 @@ def rlol():
     print("Google:" + str(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')))
     service_account_info = json.load(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
     creds = service_account.Credentials.from_service_account_info(service_account_info)
+    
     # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
+    # if not creds or not creds.valid:
+    #     if creds and creds.expired and creds.refresh_token:
+    #         creds.refresh(Request())
+    #     else:
+    #         flow = InstalledAppFlow.from_client_secrets_file(
+    #             'credentials.json', SCOPES)
+    #         creds = flow.run_local_server(port=0)
+    #     # Save the credentials for the next run
+    #     with open('token.json', 'w') as token:
+    #         token.write(creds.to_json())
 
     service = build('sheets', 'v4', credentials=creds)
 
