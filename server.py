@@ -50,10 +50,10 @@ def id():
   except ValueError:
        abort(400, 'Invalid Token')
       
-  return get_rows(idinfo['email'])
+  return get_rows(idinfo)
   
   
-def get_rows(email):  
+def get_rows(idinfo):  
     sheet=sheet_service().spreadsheets()
   
     result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
@@ -63,10 +63,10 @@ def get_rows(email):
     filteredvalues=[values[0]]
     
     for row in values[1:]:
-      if(email == row[0]):
+      if(idinfo['email'] == row[0]):
         filteredvalues.append(row)    
         
-    return render_template('results.html', table_data = filteredvalues)
+    return render_template('results.html', table_data = filteredvalues, idinfo = idinfo)
 #
 
 def sheet_service():
