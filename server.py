@@ -20,30 +20,10 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = '1HKlFYiyL6IGTsGHBtAnwNfzo0tkmO5wTm-8Avp-m5zM'
-SAMPLE_RANGE_NAME = 'A2:E100'
+SAMPLE_RANGE_NAME = 'A1:ZZ10000'
 
 # Support for gomix's 'front-end' and 'back-end' UI.
 app = Flask(__name__, static_folder='public', template_folder='views')
-
-# Set the app secret key from the secret environment variables.
-app.secret = os.environ.get('SECRET')
-
-# Dream database. Store dreams in memory for now. 
-DREAMS = ['Python. Python, everywhere.']
-
-
-@app.after_request
-def apply_kr_hello(response):
-    """Adds some headers to all responses."""
-  
-    # Made by Kenneth Reitz. 
-    if 'MADE_BY' in os.environ:
-        response.headers["X-Was-Here"] = os.environ.get('MADE_BY')
-    
-    # Powered by Flask. 
-    response.headers["X-Powered-By"] = os.environ.get('POWERED_BY')
-    return response
-
 
 @app.route('/main')
 def homepage():
@@ -56,7 +36,6 @@ def signin():
 
 @app.route('/id', methods=['GET', 'POST'])
 def id():
-  #return jsonify(str(request.data)+str(request.cookies)+ str(request.form))
   csrf_token_cookie = request.cookies.get('g_csrf_token')
   if not csrf_token_cookie:
       abort(400, 'No CSRF token in Cookie.')
@@ -68,51 +47,31 @@ def id():
   try:
     # Specify the CLIENT_ID of the app that accesses the backend:
     idinfo = id_token.verify_oauth2_token(request.form['credential'], requests.Request(), "633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.com")
-    userid = idinfo['sub']
   except ValueError:
        abort(400, 'Invalid Token')
       
   return get_rows(idinfo['email'])
   
   
-def get_rows():  
+def get_rows(email):  
     sheet=sheet_service().spreadsheets()
   
-   
     result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                 range=SAMPLE_RANGE_NAME).execute()
     values = result.get('values', [])
+    
+    filteredvalues=[]
+    filteredvalues.append(values[0])
+    
+    for row in values[1:]
+      if()
+    return jsonify(values)
 
 def sheet_service():
     creds = None
     service_account_info = json.load(open('.data/service_account.json'))
     creds = Credentials.from_service_account_info(service_account_info)
-
     return build('sheets', 'v4', credentials=creds)
   
-@app.route('/lol')
-def rlol():
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
-    creds = None
-    #print("Google:" + os.environ.get('GOOGLE_PRIVATE_KEY'))
-    service_account_info = json.load(open('.data/service_account.json'))
-    creds = Credentials.from_service_account_info(service_account_info)
-
-    service = build('sheets', 'v4', credentials=creds)
-
-    # Call the Sheets API
-    sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                range=SAMPLE_RANGE_NAME).execute()
-    values = result.get('values', [])
-
-    if not values:
-        print('No data found.')
-
-    return jsonify(values)
-  
-
 if __name__ == '__main__':
     app.run()
