@@ -10,7 +10,8 @@ import json
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
+from google.oauth2.service_account import Credentials
+
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
@@ -54,9 +55,12 @@ def rlol():
     Prints values from a sample spreadsheet.
     """
     creds = None
-    print("Google:" + str(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')))
-    service_account_info = json.load(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
-    creds = service_account.Credentials.from_service_account_info(service_account_info)
+    print("Google:" + str(os.environ.get('GOOGLE_PRIVATE_KEY')))
+    service_account_info = json.load(open('service_account.json'))
+    #service_account_info["private_key"]=os.environ.get('GOOGLE_PRIVATE_KEY')
+    print("SAI:" + str(service_account_info))
+    
+    creds = Credentials.from_service_account_info(service_account_info)
     
     # If there are no (valid) credentials available, let the user log in.
     # if not creds or not creds.valid:
