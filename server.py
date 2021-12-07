@@ -48,8 +48,12 @@ def apply_kr_hello(response):
 def homepage():
     """Displays the homepage."""
     return render_template('index.html')
-
+  
 @app.route('/')
+def signin():
+   return render_template('signin.html')
+
+@app.route('/lol')
 def rlol():
     """Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
