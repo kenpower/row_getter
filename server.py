@@ -63,7 +63,7 @@ def get_rows(email):
     filteredvalues=[]
     filteredvalues.append(values[0])
     
-    for row in values[1:]
+    for row in values[1:]:
       if()
     return jsonify(values)
 
