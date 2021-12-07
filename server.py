@@ -67,7 +67,6 @@ def get_rows(idinfo):
         filteredvalues.append(row)    
         
     return render_template('results.html', table_data = filteredvalues, idinfo = idinfo)
-#
 
 def sheet_service():
     creds = None
