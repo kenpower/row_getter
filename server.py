@@ -11,6 +11,8 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 
 # If modifying these scopes, delete the file token.json.
@@ -55,15 +57,35 @@ def signin():
 
 @app.route('/id', methods=['GET', 'POST'])
 def id():
+  #return jsonify(str(request.data)+str(request.cookies)+ str(request.form))
   csrf_token_cookie = request.cookies.get('g_csrf_token')
   if not csrf_token_cookie:
       abort(400, 'No CSRF token in Cookie.')
-  csrf_token_body = request.get('g_csrf_token')
+  csrf_token_body = request.form['g_csrf_token']
   if not csrf_token_body:
       abort(400, 'No CSRF token in post body.')
   if csrf_token_cookie != csrf_token_body:
       abort(400, 'Failed to verify double submit cookie.')
-  return jsonify(str(request.headers)+str(request.cookies))
+  try:
+    # Specify the CLIENT_ID of the app that accesses the backend:
+    idinfo = id_token.verify_oauth2_token(request.form['credential'], requests.Request(), "633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.com")
+
+    # Or, if multiple clients access the backend server:
+    # idinfo = id_token.verify_oauth2_token(token, requests.Request())
+    # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
+    #     raise ValueError('Could not verify audience.')
+
+    # If auth request is from a G Suite domain:
+    # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
+    #     raise ValueError('Wrong hosted domain.')
+
+    # ID token is valid. Get the user's Google Account ID from the decoded token.
+    userid = idinfo['sub']
+  except ValueError:
+       abort(400, 'Invalid Token')
+      
+  return jsonify(str(idinfo))
+  
 
 @app.route('/lol')
 def rlol():
