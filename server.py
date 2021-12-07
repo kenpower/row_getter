@@ -55,11 +55,20 @@ def rlol():
     Prints values from a sample spreadsheet.
     """
     creds = None
-    print("Google:" + str(os.environ.get('GOOGLE_PRIVATE_KEY')))
+    #print("Google:" + os.environ.get('GOOGLE_PRIVATE_KEY'))
     service_account_info = json.load(open('service_account.json'))
-    #service_account_info["private_key"]=os.environ.get('GOOGLE_PRIVATE_KEY')
-    print("SAI:" + str(service_account_info))
+
     
+    for k,v in service_account_info.items():
+      print(k + ":" + v)
+    
+
+    print("===================================================================")
+    
+    service_account_info["private_key"]=os.environ.get('GOOGLE_PRIVATE_KEY')
+    
+    for k,v in service_account_info.items():
+      print(k + ":" + v)
     creds = Credentials.from_service_account_info(service_account_info)
     
     # If there are no (valid) credentials available, let the user log in.
