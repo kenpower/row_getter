@@ -60,11 +60,11 @@ def get_rows(email):
                                 range=SAMPLE_RANGE_NAME).execute()
     values = result.get('values', [])
     
-    filteredvalues=[]
-    filteredvalues.append(values[0])
+    filteredvalues=[values[0]]
     
     for row in values[1:]:
-      if()
+      if(email == row[0])
+        filteredvalues.append(row)        
     return jsonify(values)
 
 def sheet_service():
