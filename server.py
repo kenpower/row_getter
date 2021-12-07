@@ -56,19 +56,7 @@ def rlol():
     """
     creds = None
     #print("Google:" + os.environ.get('GOOGLE_PRIVATE_KEY'))
-    service_account_info = json.load(open('service_account.json'))
-
-    
-    for k,v in service_account_info.items():
-      print(k + ":" + v)
-    
-
-    print("===================================================================")
-    
-    service_account_info["private_key"]=os.environ.get('GOOGLE_PRIVATE_KEY')
-    
-    for k,v in service_account_info.items():
-      print(k + ":" + v)
+    service_account_info = json.load(open('.data/service_account.json'))
     creds = Credentials.from_service_account_info(service_account_info)
     
     # If there are no (valid) credentials available, let the user log in.
