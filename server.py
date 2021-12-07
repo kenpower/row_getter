@@ -51,8 +51,10 @@ def homepage():
   
 @app.route('/')
 def signin():
+   print("test")
    return render_template('signin.html')
 
+@app.route('/id', )
 @app.route('/lol')
 def rlol():
     """Shows basic usage of the Sheets API.
