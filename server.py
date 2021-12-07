@@ -64,8 +64,10 @@ def get_rows(email):
     
     for row in values[1:]:
       if(email == row[0]):
-        filteredvalues.append(row)        
-    return jsonify(filteredvalues)
+        filteredvalues.append(row)    
+        
+    return render_template('results.html', table_data = filteredvalues)
+#
 
 def sheet_service():
     creds = None
