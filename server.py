@@ -26,7 +26,7 @@ SAMPLE_RANGE_NAME = 'A1:ZZ10000'
 app = Flask(__name__, static_folder='public', template_folder='views')
 
 def loggedIn(request):
-  csrf_token_cookie = request.cookies.get('login')
+  login_cookie = request.cookies.get('login')
   
 
 @app.route('/main')
