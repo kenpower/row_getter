@@ -14,6 +14,8 @@ from google.oauth2.service_account import Credentials
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
+from cryptography.fernet import Fernet
+
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
