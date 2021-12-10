@@ -25,6 +25,7 @@ SAMPLE_RANGE_NAME = 'A1:ZZ10000'
 # Support for gomix's 'front-end' and 'back-end' UI.
 app = Flask(__name__, static_folder='public', template_folder='views')
 
+def login()
 @app.route('/main')
 def homepage():
     """Displays the homepage."""
