@@ -32,8 +32,9 @@ def loggedIn(request):
   if login_cookie is None: 
     return false
 
-  
+  key = bytearray(os.environ.get("CRYPTO_KEY"))
   cipher_suite = Fernet(key)
+  plain_text = cipher_suite.decrypt(cipher_text)
   
 
 @app.route('/test')
