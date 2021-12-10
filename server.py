@@ -29,7 +29,16 @@ app = Flask(__name__, static_folder='public', template_folder='views')
 
 def loggedIn(request):
   login_cookie = request.cookies.get('login')
+  if login_cookie is None: 
+    return false
+
   
+  cipher_suite = Fernet(key)
+  
+
+@app.route('/test')
+def testpage():
+    return os.environ.get("CRYPTO_KEY")
 
 @app.route('/main')
 def homepage():
