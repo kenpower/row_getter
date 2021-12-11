@@ -28,7 +28,7 @@ PROD = os.environ.get('PROD')
 if PROD:
   DOMAIN = os.environ.get("DOMAIN")
   CRYPTO_KEY_STRING =  os.environ.get("CRYPTO_KEY")
-  GOOGLE_PRIVATE_KEY
+  GOOGLE_PRIVATE_KEY =  os.environ.get("GOOGLE_PRIVATE_KEY")
 else:
   DOMAIN = 'http://localhost:5000'
   CRYPTO_KEY_STRING = b"local_crypto_key"
