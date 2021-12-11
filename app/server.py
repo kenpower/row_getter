@@ -24,6 +24,18 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SAMPLE_SPREADSHEET_ID = '1HKlFYiyL6IGTsGHBtAnwNfzo0tkmO5wTm-8Avp-m5zM'
 SAMPLE_RANGE_NAME = 'A1:ZZ10000'
 
+PROD = os.environ.get('PROD')
+if PROD:
+  DOMAIN = os.environ.get("DOMAIN")
+  CRYPTO_KEY_STRING =  os.environ.get("CRYPTO_KEY")
+  GOOGLE_PRIVATE_KEY
+else:
+  DOMAIN = 'http://localhost:5000'
+  CRYPTO_KEY_STRING = b"local_crypto_key"
+
+CLIENT_ID="633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.com"
+CRYPTO_KEY = bytearray(CRYPTO_KEY_STRING)
+
 # Support for gomix's 'front-end' and 'back-end' UI.
 app = Flask(__name__, static_folder='public', template_folder='views')
 
@@ -32,7 +44,7 @@ def loggedIn(request):
   if login_cookie is None: 
     return false
 
-  key = bytearray(os.environ.get("CRYPTO_KEY"))
+  key = CRYPTO_KEY
   cipher_suite = Fernet(key)
   plain_text = cipher_suite.decrypt(cipher_text)
   
@@ -48,7 +60,7 @@ def homepage():
   
 @app.route('/')
 def signin():
-   return render_template('signin.html')
+   return render_template('signin.html', DOMAIN=DOMAIN, CLIENT_ID=CLIENT_ID)
 
 @app.route('/id', methods=['GET', 'POST'])
 def id():
@@ -65,7 +77,7 @@ def id():
     idinfo = id_token.verify_oauth2_token(
       request.form['credential'], 
       requests.Request(), 
-      "633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.com"
+      CLIENT_ID
       )
   except ValueError:
        abort(400, 'Invalid Token')
