@@ -1,0 +1,17 @@
+<html>
+  <body>
+    {{idinfo}}
+    <table>
+    
+    {% for row in table_data %}
+    <tr>
+      {% for col in row %}
+      <td>
+       {{col}}
+      </td> 
+      {% endfor %}
+    </tr>
+    {% endfor %}
+    </table>
+  </body>
+</html>
