@@ -6,6 +6,7 @@ from flask import Flask, request, render_template, jsonify, abort
 import test
 import os.path
 import json
+import login_service
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -14,7 +15,7 @@ from google.oauth2.service_account import Credentials
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
-from cryptography.fernet import Fernet
+
 
 
 # If modifying these scopes, delete the file token.json.
@@ -31,23 +32,16 @@ if PROD:
   GOOGLE_PRIVATE_KEY =  os.environ.get("GOOGLE_PRIVATE_KEY")
 else:
   DOMAIN = 'http://localhost:5000'
-  CRYPTO_KEY_STRING = b"local_crypto_key"
+  CRYPTO_KEY_STRING =b'EtaiFUpSYHXf4AdzN9uS1m5etzPhd8oUoX_-kqH1O6o=' # key for testing
+  #CRYPTO_KEY_STRING =b'TESTING_KEYXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=' # key for testing
+CRYPTO_KEY = bytearray(CRYPTO_KEY_STRING)
 
 CLIENT_ID="633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.com"
-CRYPTO_KEY = bytearray(CRYPTO_KEY_STRING)
 
 # Support for gomix's 'front-end' and 'back-end' UI.
 app = Flask(__name__, static_folder='public', template_folder='views')
 
-def loggedIn(request):
-  login_cookie = request.cookies.get('login')
-  if login_cookie is None: 
-    return false
-
-  key = CRYPTO_KEY
-  cipher_suite = Fernet(key)
-  plain_text = cipher_suite.decrypt(cipher_text)
-  
+login_service = login_service.Login_service(CRYPTO_KEY)
 
 @app.route('/test')
 def testpage():
@@ -60,7 +54,9 @@ def homepage():
   
 @app.route('/')
 def signin():
-   return render_template('signin.html', DOMAIN=DOMAIN, CLIENT_ID=CLIENT_ID)
+  if(not login_service.loggedIn(request.cookies.get('login'))):  
+    return render_template('signin.html', DOMAIN=DOMAIN, CLIENT_ID=CLIENT_ID)
+  return get_rows(idinfo)
 
 @app.route('/id', methods=['GET', 'POST'])
 def id():
@@ -81,7 +77,14 @@ def id():
       )
   except ValueError:
        abort(400, 'Invalid Token')
-      
+
+  #write a cookie
+  #redirect to /  
+  # from flask import make_response
+  # if s.setSession():
+  #     response = make_response(redirect('/home'))
+  #     response.set_cookie('session_id', s.session_id)
+  #     return response   
   return get_rows(idinfo)
   
   
