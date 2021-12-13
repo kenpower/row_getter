@@ -54,7 +54,8 @@ def homepage():
   
 @app.route('/')
 def signin():
-  if(not login_service.loggedIn(request.cookies.get('login'))):  
+  user =  login_service.get_logged_in_user(request.cookies.get('login'))
+  if(user is None):  
     return render_template('signin.html', DOMAIN=DOMAIN, CLIENT_ID=CLIENT_ID)
   return get_rows(idinfo)
 
@@ -78,14 +79,10 @@ def id():
   except ValueError:
        abort(400, 'Invalid Token')
 
-  #write a cookie
-  #redirect to /  
-  # from flask import make_response
-  # if s.setSession():
-  #     response = make_response(redirect('/home'))
-  #     response.set_cookie('session_id', s.session_id)
-  #     return response   
-  return get_rows(idinfo)
+  response = make_response(redirect('/'))
+  user = login_service.user_from_google_credentials(google_credentials)
+  response.set_cookie('login',  login_service.generate_login_cookie(user))
+  return response
   
   
 def get_rows(idinfo):  
