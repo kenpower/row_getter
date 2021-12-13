@@ -7,11 +7,10 @@ import test
 import os.path
 import json
 import login_service
+import google_sheets_service
 
-from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from google.oauth2.service_account import Credentials
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
@@ -39,6 +38,7 @@ CLIENT_ID="633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.
 app = Flask(__name__, static_folder='public', template_folder='views')
 
 login_service = login_service.Login_service(CRYPTO_KEY)
+google_sheets_service = google_sheets_service.Google_sheets_service('.data/row-getter-service-account-google.json')
 
 @app.route('/test')
 def testpage():
@@ -83,12 +83,7 @@ def google_sign_in():
   
   
 def get_rows(user):  
-    sheet=sheet_service().spreadsheets()
-  
-    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                range=SAMPLE_RANGE_NAME).execute()
-    values = result.get('values', [])
-    
+    values = google_sheets_service.get_sheet_values(SAMPLE_SPREADSHEET_ID,SAMPLE_RANGE_NAME)
     filteredvalues=[values[0]]
     
     for row in values[1:]:
@@ -96,12 +91,6 @@ def get_rows(user):
         filteredvalues.append(row)    
         
     return render_template('results.html', table_data = filteredvalues, idinfo = user)
-
-def sheet_service():
-    creds = None
-    service_account_info = json.load(open('.data/row-getter-service-account-google.json'))
-    creds = Credentials.from_service_account_info(service_account_info)
-    return build('sheets', 'v4', credentials=creds)
   
 if __name__ == '__main__':
     app.run()

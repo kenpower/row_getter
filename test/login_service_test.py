@@ -3,14 +3,11 @@ import sys
 #sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../app')))
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'app'))
 #sys.path.append(os.path.abspath('../app'))
-from flask import Flask, request 
-from werkzeug.http import dump_cookie
+
 import json
 from cryptography.fernet import Fernet
 import login_service
 import user
-
-app = Flask(__name__)
 
 CRYPTO_KEY_STRING =b'EtaiFUpSYHXf4AdzN9uS1m5etzPhd8oUoX_-kqH1O6o=' # key for testing
 CRYPTO_KEY = bytearray(CRYPTO_KEY_STRING)
@@ -22,7 +19,6 @@ def test_login_no_cookie():
 
 def test_login_rubbish_cookie():
     cookie = 'rubbish'
-    #with app.test_request_context(environ_base={'HTTP_COOKIE': header}):
     assert None == login_service.get_logged_in_user(cookie)
 
 def test_login_fake_cookie():
