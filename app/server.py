@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
-from flask import Flask, request, render_template, jsonify, abort
+from flask import Flask, request, render_template, jsonify, abort, make_response, redirect
 import test
 import os.path
 import json
@@ -14,9 +14,6 @@ from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
 from google.oauth2 import id_token
 from google.auth.transport import requests
-
-
-
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
@@ -57,10 +54,10 @@ def signin():
   user =  login_service.get_logged_in_user(request.cookies.get('login'))
   if(user is None):  
     return render_template('signin.html', DOMAIN=DOMAIN, CLIENT_ID=CLIENT_ID)
-  return get_rows(idinfo)
+  return get_rows(user)
 
-@app.route('/id', methods=['GET', 'POST'])
-def id():
+@app.route('/google_sign_in', methods=['GET', 'POST'])
+def google_sign_in():
   csrf_token_cookie = request.cookies.get('g_csrf_token')
   if not csrf_token_cookie:
       abort(400, 'No CSRF token in Cookie.')
@@ -71,7 +68,7 @@ def id():
       abort(400, 'Failed to verify double submit cookie.')
   try:
     # Specify the CLIENT_ID of the app that accesses the backend:
-    idinfo = id_token.verify_oauth2_token(
+    google_credentials = id_token.verify_oauth2_token(
       request.form['credential'], 
       requests.Request(), 
       CLIENT_ID
@@ -85,7 +82,7 @@ def id():
   return response
   
   
-def get_rows(idinfo):  
+def get_rows(user):  
     sheet=sheet_service().spreadsheets()
   
     result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
@@ -95,10 +92,10 @@ def get_rows(idinfo):
     filteredvalues=[values[0]]
     
     for row in values[1:]:
-      if(idinfo['email'] == row[0]):
+      if(user.gmail == row[0]):
         filteredvalues.append(row)    
         
-    return render_template('results.html', table_data = filteredvalues, idinfo = idinfo)
+    return render_template('results.html', table_data = filteredvalues, idinfo = user)
 
 def sheet_service():
     creds = None
