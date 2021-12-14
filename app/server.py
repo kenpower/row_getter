@@ -9,12 +9,10 @@ import json
 import login_service
 import google_sheets_service
 from google_auth_service import Google_auth_service, GoogleAuthServiceError
+from user_service import UserDataService
 
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+#SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
-# The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1HKlFYiyL6IGTsGHBtAnwNfzo0tkmO5wTm-8Avp-m5zM'
-SAMPLE_RANGE_NAME = 'A1:ZZ10000'
 SIGN_IN_WITH_GOOGLE_CLIENT_ID="633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.com"
 
 PROD = os.environ.get('PROD')
@@ -32,24 +30,22 @@ CRYPTO_KEY = bytearray(CRYPTO_KEY_STRING)
 app = Flask(__name__, static_folder='public', template_folder='views')
 
 login_service = login_service.Login_service(CRYPTO_KEY)
-google_sheets_service = google_sheets_service.Google_sheets_service('.data/row-getter-service-account-google.json')
+google_sheets_service = google_sheets_service.Google_sheets_service(\
+  '.data/row-getter-service-account-google.json')
 google_auth_service = Google_auth_service(SIGN_IN_WITH_GOOGLE_CLIENT_ID)
+user_data_service = UserDataService(google_sheets_service)
 
 @app.route('/test')
 def testpage():
-    return os.environ.get("CRYPTO_KEY")
-
-@app.route('/main')
-def homepage():
-    """Displays the homepage."""
-    return render_template('index.html')
+    return "I'm alive!"
   
 @app.route('/')
 def signin():
   user =  login_service.get_logged_in_user(request.cookies.get('login'))
   if(user is None):  
-    return render_template('signin.html', DOMAIN=DOMAIN, CLIENT_ID=SIGN_IN_WITH_GOOGLE_CLIENT_ID)
-  return get_rows(user)
+    return render_template('signin.html', \
+      DOMAIN=DOMAIN, CLIENT_ID=SIGN_IN_WITH_GOOGLE_CLIENT_ID)
+  return get_sheet_rows_for(user)
 
 @app.route('/google_sign_in', methods=['GET', 'POST'])
 def google_sign_in():
@@ -65,15 +61,9 @@ def google_sign_in():
   return response
   
   
-def get_rows(user):  
-    values = google_sheets_service.get_sheet_values(SAMPLE_SPREADSHEET_ID,SAMPLE_RANGE_NAME)
-    filteredvalues=[values[0]]
-    
-    for row in values[1:]:
-      if(user.gmail == row[0]):
-        filteredvalues.append(row)    
-        
-    return render_template('results.html', table_data = filteredvalues, idinfo = user)
+def get_sheet_rows_for(user):  
+    data = user_data_service.get_user_data_from_sheet(user.gmail)
+    return render_template('results.html', table_data = data, idinfo = user.name)
   
 if __name__ == '__main__':
     app.run()
