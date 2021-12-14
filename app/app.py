@@ -6,9 +6,9 @@ from flask import Flask, request, render_template, jsonify, abort, make_response
 import test
 import os.path
 import json
-import login_service
-import google_sheets_service
-from google_auth_service import Google_auth_service, GoogleAuthServiceError
+from login_service import LoginService
+from google_sheets_service import GoogleSheetsService
+from google_auth_service import GoogleAuthService, GoogleAuthServiceError
 from user_service import UserDataService
 
 #SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
@@ -29,10 +29,10 @@ CRYPTO_KEY = bytearray(CRYPTO_KEY_STRING)
 # Support for gomix's 'front-end' and 'back-end' UI.
 app = Flask(__name__, static_folder='public', template_folder='views')
 
-login_service = login_service.Login_service(CRYPTO_KEY)
-google_sheets_service = google_sheets_service.Google_sheets_service(\
+login_service = LoginService(CRYPTO_KEY)
+google_sheets_service = GoogleSheetsService(\
   '.data/row-getter-service-account-google.json')
-google_auth_service = Google_auth_service(SIGN_IN_WITH_GOOGLE_CLIENT_ID)
+google_auth_service = GoogleAuthService(SIGN_IN_WITH_GOOGLE_CLIENT_ID)
 user_data_service = UserDataService(google_sheets_service)
 
 @app.route('/test')

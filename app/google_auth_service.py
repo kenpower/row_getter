@@ -6,7 +6,7 @@ class GoogleAuthServiceError(Exception):
     def __init__(self, message):
         self.message = message
 
-class Google_auth_service:
+class GoogleAuthService:
     def __init__(self, CLIENT_ID):
         self.CLIENT_ID = CLIENT_ID
 

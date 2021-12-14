@@ -3,7 +3,7 @@ import json
 from flask import Flask, request
 from user import User
 
-class Login_service:
+class LoginService:
     def __init__(self, CRYPTO_KEY):
         self.CRYPTO_KEY = CRYPTO_KEY
 
