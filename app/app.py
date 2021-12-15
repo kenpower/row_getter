@@ -9,6 +9,7 @@ from login_service import LoginService
 from google_sheets_service import GoogleSheetsService
 from google_auth_service import GoogleAuthService, GoogleAuthServiceError
 from user_service import UserDataService
+from exceptions import *
 
 SIGN_IN_WITH_GOOGLE_CLIENT_ID="633569390265-fnap71ikinh8ue861eobkurui4jk0o0s.apps.googleusercontent.com"
 
@@ -71,9 +72,20 @@ def main():
 def with_google_sheet_id(google_sheet_id):
   return get_sheet_rows_for(g.user, google_sheet_id)
 
-def get_sheet_rows_for(user, google_sheet_id = None):  
-    data = user_data_service.get_user_data_from_sheet(user.gmail, google_sheet_id)
-    return render_template('results.html', table_data = data, idinfo = user.name)
+def get_sheet_rows_for(user, google_sheet_id = None):
+  try:
+    if google_sheet_id is None:  
+      data = user_data_service.get_user_data_from_sheet(user.gmail)
+    else:
+      data = user_data_service.get_user_data_from_sheet(user.gmail, google_sheet_id)
+    return render_template('results.html', table_data = data, user = user)
+  except SpreadSheetNotFoundError as e:
+    error=f"{google_sheet_id} is not a valid Google doc ID"
+  except NotAGooogleSpreadSheetError as e:
+    error=f"{google_sheet_id} is not a Google Sheet (might be a xlxs sheet stored in gDrive)"
+  except PermissionDeniedError as e:
+    error=f"{google_sheet_id} is not shared with this app (it needs to be shared with  'row-getter-service@row-getter.iam.gserviceaccount.com')"
   
+  return render_template('error.html',message = error)
 if __name__ == '__main__':
     app.run()

@@ -1,4 +1,5 @@
 
+SHARE_WITH = 'row-getter-service@row-getter.iam.gserviceaccount.com'
 SAMPLE_SPREADSHEET_ID = '1HKlFYiyL6IGTsGHBtAnwNfzo0tkmO5wTm-8Avp-m5zM'
 SAMPLE_RANGE_NAME = 'A1:ZZ10000'
 
