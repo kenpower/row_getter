@@ -2,6 +2,7 @@ import json
 from googleapiclient.discovery import build
 from google.oauth2.service_account import Credentials
 
+#SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 class GoogleSheetsService:
     def __init__(self, credentials_file_path):
         service_account_info = json.load(open(credentials_file_path))
