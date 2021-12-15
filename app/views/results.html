@@ -1,8 +1,10 @@
 <html>
   <body>
+    <style src={{ url_for('static', filename='style.css') }}></style> 
     {{user.name}} <br/>
     {{user.gmail}} <br/>
-    picture URL = {{user.picture_url}} <br/>
+    {{user.picture_url}} <br/>
+    <img class = "avatar" src="{{user.picture_url}}"/> <br/>
     <hr/> 
     <table>
     
