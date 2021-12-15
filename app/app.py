@@ -66,8 +66,13 @@ def testpage():
 def main():
   return get_sheet_rows_for(g.user)
 
-def get_sheet_rows_for(user):  
-    data = user_data_service.get_user_data_from_sheet(user.gmail)
+@app.route('/g/<google_sheet_id>')
+@login_user
+def with_google_sheet_id(google_sheet_id):
+  return get_sheet_rows_for(g.user, google_sheet_id)
+
+def get_sheet_rows_for(user, google_sheet_id = None):  
+    data = user_data_service.get_user_data_from_sheet(user.gmail, google_sheet_id)
     return render_template('results.html', table_data = data, idinfo = user.name)
   
 if __name__ == '__main__':
