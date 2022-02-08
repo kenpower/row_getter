@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
-from flask import Flask, g, request, render_template, abort, make_response, redirect
+from flask import Flask, g, request, render_template, abort, make_response, redirect, url_for
 import json
 from functools import wraps
 from login_service import LoginService
@@ -25,7 +25,8 @@ else:
 CRYPTO_KEY = bytearray(CRYPTO_KEY_STRING)
 
 # Support for gomix's 'front-end' and 'back-end' UI.
-app = Flask(__name__, static_folder='public', template_folder='views')
+app = Flask(__name__, static_folder='./public', template_folder='views')
+
 
 login_service = LoginService(CRYPTO_KEY)
 google_sheets_service = GoogleSheetsService(\
@@ -87,5 +88,7 @@ def get_sheet_rows_for(user, google_sheet_id = None):
     error=f"{google_sheet_id} is not shared with this app (it needs to be shared with  'row-getter-service@row-getter.iam.gserviceaccount.com')"
   
   return render_template('error.html',message = error)
+
+print(__name__)  
 if __name__ == '__main__':
     app.run()

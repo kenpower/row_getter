@@ -22,6 +22,7 @@ class GoogleAuthService:
         
         try:
         # Specify the CLIENT_ID of the app that accesses the backend:
+            print(request.form['credential'] )
             google_credentials = id_token.verify_oauth2_token(
                 request.form['credential'], 
                 requests.Request(), 
