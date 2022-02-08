@@ -1,4 +1,4 @@
 # For development use (simple logging, etc):
-python app/server.py
+python app/app.py
 # For production use: 
 # gunicorn server:app -w 1 --log-file -

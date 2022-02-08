@@ -1,0 +1,50 @@
+/* styles */
+/* called by your view template */
+
+/* You might want to try something fancier: */
+/* less: http://lesscss.org/ */
+
+
+body {
+  font-family: roboto, arial, sans-serif;
+  margin: 25px;
+}
+
+
+.avatar{
+  background-size: 32px 32px;
+  border: brown;
+  border-width: 1px;
+  border-radius: 50%;
+  display: block;
+  margin: 0px;
+  position: relative;
+  height: 32px;
+  width: 32px;
+  z-index: 0;
+}
+
+nav{
+  background-color: #BBBBBB;
+  width: 100%;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+}
+
+.profile{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+td{
+  font-family: roboto mono, courier, monospace;
+}
+
+table{
+  max-width: 100%;
+}
